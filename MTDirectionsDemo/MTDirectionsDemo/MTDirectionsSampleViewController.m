@@ -67,7 +67,7 @@
         _overlayColor = [UIColor colorWithRed:0.f green:0.25f blue:1.f alpha:1.f];
         
         MTDDirectionsSetLogLevel(MTDLogLevelInfo);
-        //MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+        MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
     }
     
     return self;
