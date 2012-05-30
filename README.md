@@ -12,7 +12,8 @@ __[Check out the homepage for further information, screenshots and a video demon
 ### Information
 
 This Demo demonstrates the use of MTDirectionsKit. 
-The framework includes a watermark which isn't present in the full version of MTDirectionsKit.
+The framework included in this demo includes a watermark which isn't present in the full version of MTDirectionsKit and falls under
+the MTDirectionsKit Evaluation License. See the [MTDirectionsKit License](https://gist.github.com/f5ca9ff506675ba0fa0d "MTDirectionsKit License") for more information.
 
 
 Follow [@myell0w](https://twitter.com/myell0w) on Twitter.
