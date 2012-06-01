@@ -13,4 +13,6 @@
 
 @interface MTDirectionsSampleViewController : UIViewController <MTDDirectionsDelegate>
 
++ (id)viewController;
+
 @end

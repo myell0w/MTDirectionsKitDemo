@@ -61,6 +61,10 @@
 #pragma mark - Lifecycle
 ////////////////////////////////////////////////////////////////////////
 
++ (id)viewController {
+    return [[self alloc] initWithNibName:nil bundle:nil];
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         self.title = @"MTDirectionsKit";
@@ -89,7 +93,7 @@
     
     self.distanceControl = [[UILabel alloc] initWithFrame:CGRectMake(0.f, self.view.bounds.size.height - 35.f, self.view.bounds.size.width, 35.f)];
     self.distanceControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.distanceControl.backgroundColor = [UIColor colorWithWhite:0.2 alpha:0.4];
+    self.distanceControl.backgroundColor = [UIColor colorWithWhite:0.2f alpha:0.6f];
     self.distanceControl.font = [UIFont boldSystemFontOfSize:14.f];
     self.distanceControl.textColor = [UIColor whiteColor];
     self.distanceControl.textAlignment = UITextAlignmentCenter;
@@ -103,10 +107,10 @@
                                                                        [UIImage imageNamed:@"bicycle"],
                                                                        [UIImage imageNamed:@"car"], nil]];
     self.segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
+    self.segmentedControl.selectedSegmentIndex = 2;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         self.segmentedControl.tintColor = [UIColor lightGrayColor];
     }
-    self.segmentedControl.selectedSegmentIndex = 2;
     
     self.searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                                                     target:self
@@ -199,14 +203,11 @@
     self.mapView = nil;
     self.fromAnnotation = nil;
     self.toAnnotation = nil;
-    
     self.searchItem = nil;
     self.routeItem = nil;
     self.cancelItem = nil;
     self.navigationItem.leftBarButtonItem = nil;
-    
     self.segmentedControl = nil;
-    
     self.routeBackgroundView = nil;
     self.fromControl = nil;
     self.toControl = nil;
