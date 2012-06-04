@@ -70,7 +70,7 @@
         self.title = @"MTDirectionsKit";
         _overlayColor = [UIColor colorWithRed:0.f green:0.25f blue:1.f alpha:1.f];
         
-        MTDDirectionsSetLogLevel(MTDLogLevelInfo);
+        MTDDirectionsSetLogLevel(MTDLogLevelVerbose);
         MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
     }
     
@@ -183,14 +183,20 @@
     self.toControl.placeholder = @"Address or Lat/Lng";
     [self.routeBackgroundView addSubview:self.toControl];
     
-    CLLocationCoordinate2D from = CLLocationCoordinate2DMake(51.38713, -1.0316);
-    CLLocationCoordinate2D to = CLLocationCoordinate2DMake(51.4554, -0.9742);
+    CLLocationCoordinate2D from = CLLocationCoordinate2DMake(51.4554, -0.9742); // Reading
+    CLLocationCoordinate2D to = CLLocationCoordinate2DMake(51.38713, -1.0316);  // NSConference
+    CLLocationCoordinate2D intermediateGoal1 = CLLocationCoordinate2DMake(51.3765, -1.003); // Beech Hill
+    CLLocationCoordinate2D intermediateGoal2 = CLLocationCoordinate2DMake(51.4388, -0.9409); // University
     
     double delayInSeconds = 1.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-        [self.mapView loadDirectionsFrom:from
-                                      to:to
+        [self.mapView loadDirectionsFrom:[MTDWaypoint waypointWithCoordinate:from]
+                                      to:[MTDWaypoint waypointWithCoordinate:to]
+                       intermediateGoals:[NSArray arrayWithObjects:
+                                          [MTDWaypoint waypointWithCoordinate:intermediateGoal1],
+                                          [MTDWaypoint waypointWithCoordinate:intermediateGoal2],
+                                          nil]
                                routeType:MTDDirectionsRouteTypeFastestDriving
                     zoomToShowDirections:YES];
     });
@@ -220,21 +226,11 @@
 #pragma mark - MTDDirectionsDelegate
 ////////////////////////////////////////////////////////////////////////
 
-- (void)mapView:(MTDMapView *)mapView willStartLoadingDirectionsFrom:(CLLocationCoordinate2D)fromCoordinate to:(CLLocationCoordinate2D)toCoordinate routeType:(MTDDirectionsRouteType)routeType {
+- (void)mapView:(MTDMapView *)mapView willStartLoadingDirectionsFrom:(MTDWaypoint *)from to:(MTDWaypoint *)to routeType:(MTDDirectionsRouteType)routeType {
     NSLog(@"MapView %@ willStartLoadingDirectionsFrom:%@ to:%@ routeType:%d",
           mapView,
-          MTDStringFromCLLocationCoordinate2D(fromCoordinate),
-          MTDStringFromCLLocationCoordinate2D(toCoordinate),
-          routeType);
-    
-    [self showLoadingIndicator];
-}
-
-- (void)mapView:(MTDMapView *)mapView willStartLoadingDirectionsFromAddress:(NSString *)fromAddress toAddress:(NSString *)toAddress routeType:(MTDDirectionsRouteType)routeType {
-    NSLog(@"MapView %@ willStartLoadingDirectionsFromAddress:%@ toAddress:%@ routeType:%d",
-          mapView,
-          fromAddress,
-          toAddress,
+          from,
+          to,
           routeType);
     
     [self showLoadingIndicator];
