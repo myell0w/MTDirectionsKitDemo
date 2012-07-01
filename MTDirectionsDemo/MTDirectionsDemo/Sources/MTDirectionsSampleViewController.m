@@ -197,6 +197,7 @@
                                           [MTDWaypoint waypointWithCoordinate:intermediateGoal1],
                                           [MTDWaypoint waypointWithCoordinate:intermediateGoal2],
                                           nil]
+                           optimizeRoute:YES
                                routeType:MTDDirectionsRouteTypeFastestDriving
                     zoomToShowDirections:YES];
     });
@@ -275,6 +276,10 @@
     NSLog(@"MapView %@ colorForDirectionsOverlay: %@", mapView, directionsOverlay);
     
     return self.overlayColor;
+}
+
+- (CGFloat)mapView:(MTDMapView *)mapView lineWidthFactorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+    return 1.2f;
 }
 
 ////////////////////////////////////////////////////////////////////////
