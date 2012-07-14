@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UIButton *colorChooserControl;
 @property (nonatomic, strong) UIPopoverController *colorPopoverController;
 
+@property (nonatomic, strong) NSMutableArray *intermediateGoals;
 @property (nonatomic, readonly, getter = isSearchUIVisible) BOOL searchUIVisible;
 @property (nonatomic, readonly) MTDDirectionsRouteType routeType;
 
@@ -30,12 +31,15 @@
 - (void)handleRouteItemPress:(id)sender;
 - (void)handleCancelItemPress:(id)sender;
 - (void)handleColorChooserPress:(id)sender;
+- (void)handleMapLongPress:(UILongPressGestureRecognizer *)longPress;
 
 - (void)hideRouteView;
 - (void)performSearch;
 
 - (void)showLoadingIndicator;
 - (void)hideLoadingIndicator;
+
+- (void)setupUI;
 
 @end
 
@@ -56,6 +60,7 @@
 @synthesize distanceControl = _distanceControl;
 @synthesize colorChooserControl = _colorChooserControl;
 @synthesize colorPopoverController = _colorPopoverController;
+@synthesize intermediateGoals = _intermediateGoals;
 
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - Lifecycle
@@ -68,10 +73,12 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         self.title = @"MTDirectionsKit";
+        
         _overlayColor = [UIColor colorWithRed:0.f green:0.25f blue:1.f alpha:1.f];
+        _intermediateGoals = [NSMutableArray array];
         
         MTDDirectionsSetLogLevel(MTDLogLevelVerbose);
-        MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+        // MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
     }
     
     return self;
@@ -84,108 +91,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-	self.mapView = [[MTDMapView alloc] initWithFrame:self.view.bounds];
-    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.mapView.delegate = self;
-    self.mapView.region = MKCoordinateRegionMake(CLLocationCoordinate2DMake(51.459596, -0.973277),
-                                                 MKCoordinateSpanMake(0.026846, 0.032959));
-    [self.view addSubview:self.mapView];
-    
-    self.distanceControl = [[UILabel alloc] initWithFrame:CGRectMake(0.f, self.view.bounds.size.height - 35.f, self.view.bounds.size.width, 35.f)];
-    self.distanceControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.distanceControl.backgroundColor = [UIColor colorWithWhite:0.2f alpha:0.6f];
-    self.distanceControl.font = [UIFont boldSystemFontOfSize:14.f];
-    self.distanceControl.textColor = [UIColor whiteColor];
-    self.distanceControl.textAlignment = UITextAlignmentCenter;
-    self.distanceControl.shadowColor = [UIColor blackColor];
-    self.distanceControl.shadowOffset = CGSizeMake(0.f, 1.f);
-    self.distanceControl.text = @"Try MTDirectionsKit, it's great!";
-    [self.view addSubview:self.distanceControl];
-    
-    self.segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:
-                                                                       [UIImage imageNamed:@"pedestrian"],
-                                                                       [UIImage imageNamed:@"bicycle"],
-                                                                       [UIImage imageNamed:@"car"], nil]];
-    self.segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
-    self.segmentedControl.selectedSegmentIndex = 2;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        self.segmentedControl.tintColor = [UIColor lightGrayColor];
-    }
-    
-    self.searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
-                                                                    target:self
-                                                                    action:@selector(handleSearchItemPress:)];
-    self.navigationItem.leftBarButtonItem = self.searchItem;
-    
-    self.routeItem = [[UIBarButtonItem alloc] initWithTitle:@"Route" 
-                                                      style:UIBarButtonItemStyleDone
-                                                     target:self 
-                                                     action:@selector(handleRouteItemPress:)];
-    
-    self.cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" 
-                                                       style:UIBarButtonItemStyleBordered
-                                                      target:self 
-                                                      action:@selector(handleCancelItemPress:)];
-    
-    self.routeBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, -75.f, self.view.bounds.size.width, 75.f)];
-    self.routeBackgroundView.backgroundColor = [UIColor colorWithRed:119.f/255.f green:141.f/255.f blue:172.f/255.f alpha:1.f];
-    self.routeBackgroundView.alpha = 0.f;
-    [self.view addSubview:self.routeBackgroundView];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 20.f)];
-    
-    label.backgroundColor = [UIColor clearColor];
-    label.textColor = [UIColor grayColor];
-    label.textAlignment = UITextAlignmentRight;
-    label.text = @"Start:";
-    
-    self.colorChooserControl = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.colorChooserControl.backgroundColor = [UIColor blueColor];
-    self.colorChooserControl.layer.borderColor = [UIColor grayColor].CGColor;
-    self.colorChooserControl.layer.borderWidth = 1.f;
-    self.colorChooserControl.layer.cornerRadius = 8.f;
-    self.colorChooserControl.frame = CGRectMake(self.routeBackgroundView.frame.size.width - 45.f, 5.f, 
-                                                40.f, self.routeBackgroundView.frame.size.height - 10.f);
-    [self.colorChooserControl addTarget:self action:@selector(handleColorChooserPress:) forControlEvents:UIControlEventTouchUpInside];
-    [self.routeBackgroundView addSubview:self.colorChooserControl];
-    
-    self.fromControl = [[UITextField alloc] initWithFrame:CGRectMake(5.f, 5.f,
-                                                                     self.routeBackgroundView.bounds.size.width-self.colorChooserControl.bounds.size.width - 15.f, 30.f)];
-    self.fromControl.borderStyle = UITextBorderStyleRoundedRect;
-    self.fromControl.leftViewMode = UITextFieldViewModeAlways;
-    self.fromControl.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    label.font = self.fromControl.font;
-    self.fromControl.leftView = label;
-    self.fromControl.returnKeyType = UIReturnKeyNext;
-    self.fromControl.clearButtonMode = UITextFieldViewModeWhileEditing;
-    self.fromControl.delegate = self;
-    self.fromControl.text = @"Güssing, Österreich";
-    self.fromControl.placeholder = @"Address or Lat/Lng";
-    [self.routeBackgroundView addSubview:self.fromControl];
-    
-    label = [[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 20.f)];
-    label.backgroundColor = [UIColor clearColor];
-    label.textColor = [UIColor grayColor];
-    label.textAlignment = UITextAlignmentRight;
-    label.font = self.fromControl.font;
-    label.text = @"End:";
-    
-    self.toControl = [[UITextField alloc] initWithFrame:CGRectMake(5.f, self.fromControl.frame.origin.y + self.fromControl.frame.size.height + 5.f,
-                                                                   self.routeBackgroundView.bounds.size.width-self.colorChooserControl.bounds.size.width - 15.f, 30.f)];
-    self.toControl.borderStyle = UITextBorderStyleRoundedRect;
-    self.toControl.leftViewMode = UITextFieldViewModeAlways;
-    self.toControl.leftView = label;
-    self.toControl.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    self.toControl.returnKeyType = UIReturnKeyRoute;
-    self.toControl.clearButtonMode = UITextFieldViewModeWhileEditing;
-    self.toControl.delegate = self;
-    self.toControl.text = @"Wien";
-    self.toControl.placeholder = @"Address or Lat/Lng";
-    [self.routeBackgroundView addSubview:self.toControl];
+    [self setupUI];
     
     CLLocationCoordinate2D from = CLLocationCoordinate2DMake(51.4554, -0.9742); // Reading
     CLLocationCoordinate2D to = CLLocationCoordinate2DMake(51.38713, -1.0316);  // NSConference
-    CLLocationCoordinate2D intermediateGoal1 = CLLocationCoordinate2DMake(51.3765, -1.003); // Beech Hill
+    CLLocationCoordinate2D intermediateGoal1 = CLLocationCoordinate2DMake(51.3765, -1.003);  // Beech Hill
     CLLocationCoordinate2D intermediateGoal2 = CLLocationCoordinate2DMake(51.4388, -0.9409); // University
     
     double delayInSeconds = 1.0;
@@ -195,8 +105,7 @@
                                       to:[MTDWaypoint waypointWithCoordinate:to]
                        intermediateGoals:[NSArray arrayWithObjects:
                                           [MTDWaypoint waypointWithCoordinate:intermediateGoal1],
-                                          [MTDWaypoint waypointWithCoordinate:intermediateGoal2],
-                                          nil]
+                                          [MTDWaypoint waypointWithCoordinate:intermediateGoal2], nil]
                            optimizeRoute:YES
                                routeType:MTDDirectionsRouteTypeFastestDriving
                     zoomToShowDirections:YES];
@@ -256,6 +165,13 @@
     [self.mapView addAnnotation:self.fromAnnotation];
     [self.mapView addAnnotation:self.toAnnotation];
     
+    for (MTDWaypoint *intermediateGoal in directionsOverlay.intermediateGoals) {
+        MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+        
+        annotation.coordinate = intermediateGoal.coordinate;
+        [self.mapView addAnnotation:annotation];
+    }
+    
     [self hideLoadingIndicator];
     
     return directionsOverlay;
@@ -303,6 +219,8 @@
     pin.animatesDrop = YES;
     
     if (annotation == self.fromAnnotation) {
+        pin.pinColor = MKPinAnnotationColorRed;
+    } else if (annotation == self.toAnnotation) {
         pin.pinColor = MKPinAnnotationColorGreen;
     } else {
         pin.pinColor = MKPinAnnotationColorPurple;
@@ -318,8 +236,10 @@ didChangeDragState:(MKAnnotationViewDragState)newState
    fromOldState:(MKAnnotationViewDragState)oldState {
     
     if(newState == MKAnnotationViewDragStateEnding) {
-        [self.mapView loadDirectionsFrom:self.fromAnnotation.coordinate
-                                      to:self.toAnnotation.coordinate
+        [self.mapView loadDirectionsFrom:[MTDWaypoint waypointWithCoordinate:self.fromAnnotation.coordinate]
+                                      to:[MTDWaypoint waypointWithCoordinate:self.toAnnotation.coordinate]
+                       intermediateGoals:self.intermediateGoals
+                           optimizeRoute:YES
                                routeType:self.routeType
                     zoomToShowDirections:NO];
         
@@ -424,6 +344,27 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     }
 }
 
+- (void)handleMapLongPress:(UILongPressGestureRecognizer *)longPress {
+    if ((longPress.state & UIGestureRecognizerStateRecognized) == UIGestureRecognizerStateRecognized) {
+        CGPoint location = [longPress locationInView:self.mapView];
+        CLLocationCoordinate2D coordinate = [self.mapView convertPoint:location toCoordinateFromView:self.mapView];
+        
+        [self.intermediateGoals addObject:[MTDWaypoint waypointWithCoordinate:coordinate]];
+        
+        MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+        
+        annotation.coordinate = coordinate;
+        [self.mapView addAnnotation:annotation];
+        
+        [self.mapView loadDirectionsFrom:[MTDWaypoint waypointWithCoordinate:self.fromAnnotation.coordinate]
+                                      to:[MTDWaypoint waypointWithCoordinate:self.toAnnotation.coordinate]
+                       intermediateGoals:self.intermediateGoals
+                           optimizeRoute:YES
+                               routeType:self.routeType
+                    zoomToShowDirections:NO];
+    }
+}
+
 - (void)hideRouteView {
     self.navigationItem.titleView = nil;
     [self.navigationItem setLeftBarButtonItem:self.searchItem animated:YES];
@@ -445,6 +386,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     NSString *to = self.toControl.text;
     NSArray *fromComponents = [[from stringByReplacingOccurrencesOfString:@" " withString:@""] componentsSeparatedByString:@"/"];
     NSArray *toComponents = [[to stringByReplacingOccurrencesOfString:@" " withString:@""] componentsSeparatedByString:@"/"];
+    
+    [self.intermediateGoals removeAllObjects];
     
     if (fromComponents.count == 2 && toComponents.count == 2) {
         CLLocationCoordinate2D fromCoordinate = CLLocationCoordinate2DMake([[fromComponents objectAtIndex:0] doubleValue], [[fromComponents objectAtIndex:1] doubleValue]);
@@ -487,6 +430,110 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 - (void)hideLoadingIndicator {
     self.navigationItem.rightBarButtonItem = nil;
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+}
+
+- (void)setupUI {
+    self.mapView = [[MTDMapView alloc] initWithFrame:self.view.bounds];
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.mapView.delegate = self;
+    self.mapView.region = MKCoordinateRegionMake(CLLocationCoordinate2DMake(51.459596, -0.973277),
+                                                 MKCoordinateSpanMake(0.026846, 0.032959));
+    [self.view addSubview:self.mapView];
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapLongPress:)];
+    [self.mapView addGestureRecognizer:longPress];
+    
+    self.distanceControl = [[UILabel alloc] initWithFrame:CGRectMake(0.f, self.view.bounds.size.height - 35.f, self.view.bounds.size.width, 35.f)];
+    self.distanceControl.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+    self.distanceControl.backgroundColor = [UIColor colorWithWhite:0.2f alpha:0.6f];
+    self.distanceControl.font = [UIFont boldSystemFontOfSize:14.f];
+    self.distanceControl.textColor = [UIColor whiteColor];
+    self.distanceControl.textAlignment = UITextAlignmentCenter;
+    self.distanceControl.shadowColor = [UIColor blackColor];
+    self.distanceControl.shadowOffset = CGSizeMake(0.f, 1.f);
+    self.distanceControl.text = @"Try MTDirectionsKit, it's great!";
+    [self.view addSubview:self.distanceControl];
+    
+    self.segmentedControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:
+                                                                       [UIImage imageNamed:@"pedestrian"],
+                                                                       [UIImage imageNamed:@"bicycle"],
+                                                                       [UIImage imageNamed:@"car"], nil]];
+    self.segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
+    self.segmentedControl.selectedSegmentIndex = 2;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        self.segmentedControl.tintColor = [UIColor lightGrayColor];
+    }
+    
+    self.searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
+                                                                    target:self
+                                                                    action:@selector(handleSearchItemPress:)];
+    self.navigationItem.leftBarButtonItem = self.searchItem;
+    
+    self.routeItem = [[UIBarButtonItem alloc] initWithTitle:@"Route" 
+                                                      style:UIBarButtonItemStyleDone
+                                                     target:self 
+                                                     action:@selector(handleRouteItemPress:)];
+    
+    self.cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" 
+                                                       style:UIBarButtonItemStyleBordered
+                                                      target:self 
+                                                      action:@selector(handleCancelItemPress:)];
+    
+    self.routeBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, -75.f, self.view.bounds.size.width, 75.f)];
+    self.routeBackgroundView.backgroundColor = [UIColor colorWithRed:119.f/255.f green:141.f/255.f blue:172.f/255.f alpha:1.f];
+    self.routeBackgroundView.alpha = 0.f;
+    [self.view addSubview:self.routeBackgroundView];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 20.f)];
+    
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [UIColor grayColor];
+    label.textAlignment = UITextAlignmentRight;
+    label.text = @"Start:";
+    
+    self.colorChooserControl = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.colorChooserControl.backgroundColor = [UIColor blueColor];
+    self.colorChooserControl.layer.borderColor = [UIColor grayColor].CGColor;
+    self.colorChooserControl.layer.borderWidth = 1.f;
+    self.colorChooserControl.layer.cornerRadius = 8.f;
+    self.colorChooserControl.frame = CGRectMake(self.routeBackgroundView.frame.size.width - 45.f, 5.f, 
+                                                40.f, self.routeBackgroundView.frame.size.height - 10.f);
+    [self.colorChooserControl addTarget:self action:@selector(handleColorChooserPress:) forControlEvents:UIControlEventTouchUpInside];
+    [self.routeBackgroundView addSubview:self.colorChooserControl];
+    
+    self.fromControl = [[UITextField alloc] initWithFrame:CGRectMake(5.f, 5.f,
+                                                                     self.routeBackgroundView.bounds.size.width-self.colorChooserControl.bounds.size.width - 15.f, 30.f)];
+    self.fromControl.borderStyle = UITextBorderStyleRoundedRect;
+    self.fromControl.leftViewMode = UITextFieldViewModeAlways;
+    self.fromControl.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    label.font = self.fromControl.font;
+    self.fromControl.leftView = label;
+    self.fromControl.returnKeyType = UIReturnKeyNext;
+    self.fromControl.clearButtonMode = UITextFieldViewModeWhileEditing;
+    self.fromControl.delegate = self;
+    self.fromControl.text = @"Güssing, Österreich";
+    self.fromControl.placeholder = @"Address or Lat/Lng";
+    [self.routeBackgroundView addSubview:self.fromControl];
+    
+    label = [[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 20.f)];
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [UIColor grayColor];
+    label.textAlignment = UITextAlignmentRight;
+    label.font = self.fromControl.font;
+    label.text = @"End:";
+    
+    self.toControl = [[UITextField alloc] initWithFrame:CGRectMake(5.f, self.fromControl.frame.origin.y + self.fromControl.frame.size.height + 5.f,
+                                                                   self.routeBackgroundView.bounds.size.width-self.colorChooserControl.bounds.size.width - 15.f, 30.f)];
+    self.toControl.borderStyle = UITextBorderStyleRoundedRect;
+    self.toControl.leftViewMode = UITextFieldViewModeAlways;
+    self.toControl.leftView = label;
+    self.toControl.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    self.toControl.returnKeyType = UIReturnKeyRoute;
+    self.toControl.clearButtonMode = UITextFieldViewModeWhileEditing;
+    self.toControl.delegate = self;
+    self.toControl.text = @"Wien";
+    self.toControl.placeholder = @"Address or Lat/Lng";
+    [self.routeBackgroundView addSubview:self.toControl];
 }
 
 @end
