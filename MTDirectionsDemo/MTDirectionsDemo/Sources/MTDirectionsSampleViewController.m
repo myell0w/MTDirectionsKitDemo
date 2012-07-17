@@ -78,7 +78,7 @@
         _intermediateGoals = [NSMutableArray array];
         
         MTDDirectionsSetLogLevel(MTDLogLevelVerbose);
-        // MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+        MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
     }
     
     return self;
@@ -158,9 +158,11 @@
     
     self.fromAnnotation = [[MKPointAnnotation alloc] init];
     self.fromAnnotation.coordinate = directionsOverlay.fromCoordinate;
+    self.fromAnnotation.title = [directionsOverlay.fromAddress descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
     
     self.toAnnotation = [[MKPointAnnotation alloc] init];
     self.toAnnotation.coordinate = directionsOverlay.toCoordinate;
+    self.toAnnotation.title = [directionsOverlay.toAddress descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
     
     [self.mapView addAnnotation:self.fromAnnotation];
     [self.mapView addAnnotation:self.toAnnotation];
@@ -217,6 +219,7 @@
     
     pin.draggable = YES;
     pin.animatesDrop = YES;
+    pin.canShowCallout = YES;
     
     if (annotation == self.fromAnnotation) {
         pin.pinColor = MKPinAnnotationColorRed;
