@@ -2,6 +2,8 @@
 // Color Picker from https://github.com/hayashi311/Color-Picker-for-iOS
 #import "HRColorPickerViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MTDSampleParser.h"
+#import "MTDSampleRequest.h"
 
 
 @interface MTDirectionsSampleViewController () <MKMapViewDelegate, UITextFieldDelegate, HRColorPickerViewControllerDelegate> {
@@ -55,11 +57,17 @@
         if (MTDDirectionsSupportsAppleMaps()) {
             MTDDirectionsSetActiveAPI(MTDDirectionsAPIMapQuest);
 
+            // Demonstrate Bing API
             // [MTDDirectionsRequestBing registerAPIKey:YOUR_API_KEY];
             // MTDDirectionsSetActiveAPI(MTDDirectionsAPIBing);
         } else {
             MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
         }
+
+        // Demonstrate custom API Provider
+        //MTDDirectionsSetActiveAPI(MTDDirectionsAPICustom);
+        //MTDDirectionsAPIRegisterCustomParserClass([MTDSampleParser class]);
+        //MTDDirectionsAPIRegisterCustomRequestClass([MTDSampleRequest class]);
     }
 
     return self;

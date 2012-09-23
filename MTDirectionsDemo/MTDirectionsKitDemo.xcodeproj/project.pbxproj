@@ -33,6 +33,9 @@
 		9B3F0881157955BC00CAE78D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B3F087D157952A400CAE78D /* AppDelegate.m */; };
 		9B76F423156F990A00B54B05 /* MTDirectionsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */; };
 		9BAA4C3D160F8453009C98CF /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BAA4C3C160F8453009C98CF /* Default-568h@2x.png */; };
+		9BAA4C44160F8578009C98CF /* sample.directions in Resources */ = {isa = PBXBuildFile; fileRef = 9BAA4C43160F8578009C98CF /* sample.directions */; };
+		9BAA4C45160F8627009C98CF /* MTDSampleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BAA4C3F160F8570009C98CF /* MTDSampleParser.m */; };
+		9BAA4C46160F862A009C98CF /* MTDSampleRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BAA4C41160F8570009C98CF /* MTDSampleRequest.m */; };
 		9BB9AD191517602C003FC9F7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD181517602C003FC9F7 /* UIKit.framework */; };
 		9BB9AD1B1517602C003FC9F7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD1A1517602C003FC9F7 /* Foundation.framework */; };
 		9BB9AD1D1517602C003FC9F7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD1C1517602C003FC9F7 /* CoreGraphics.framework */; };
@@ -77,6 +80,11 @@
 		9B3F087F157952A400CAE78D /* MTDirectionsSampleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDirectionsSampleViewController.m; path = Sources/MTDirectionsSampleViewController.m; sourceTree = "<group>"; };
 		9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MTDirectionsKit.framework; path = ../MTDirectionsKit.framework; sourceTree = "<group>"; };
 		9BAA4C3C160F8453009C98CF /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		9BAA4C3E160F8570009C98CF /* MTDSampleParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDSampleParser.h; path = Sources/MTDSampleParser.h; sourceTree = "<group>"; };
+		9BAA4C3F160F8570009C98CF /* MTDSampleParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDSampleParser.m; path = Sources/MTDSampleParser.m; sourceTree = "<group>"; };
+		9BAA4C40160F8570009C98CF /* MTDSampleRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDSampleRequest.h; path = Sources/MTDSampleRequest.h; sourceTree = "<group>"; };
+		9BAA4C41160F8570009C98CF /* MTDSampleRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDSampleRequest.m; path = Sources/MTDSampleRequest.m; sourceTree = "<group>"; };
+		9BAA4C43160F8578009C98CF /* sample.directions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.directions; sourceTree = "<group>"; };
 		9BB9AD141517602C003FC9F7 /* MTDirections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTDirections.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BB9AD181517602C003FC9F7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9BB9AD1A1517602C003FC9F7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -175,8 +183,21 @@
 				9B3F087D157952A400CAE78D /* AppDelegate.m */,
 				9B3F087E157952A400CAE78D /* MTDirectionsSampleViewController.h */,
 				9B3F087F157952A400CAE78D /* MTDirectionsSampleViewController.m */,
+				9BAA4C3E160F8570009C98CF /* MTDSampleParser.h */,
+				9BAA4C3F160F8570009C98CF /* MTDSampleParser.m */,
+				9BAA4C40160F8570009C98CF /* MTDSampleRequest.h */,
+				9BAA4C41160F8570009C98CF /* MTDSampleRequest.m */,
 			);
 			name = Sources;
+			sourceTree = "<group>";
+		};
+		9BAA4C42160F8578009C98CF /* Directions */ = {
+			isa = PBXGroup;
+			children = (
+				9BAA4C43160F8578009C98CF /* sample.directions */,
+			);
+			name = Directions;
+			path = Resources/Directions;
 			sourceTree = "<group>";
 		};
 		9BB9AD091517602C003FC9F7 = {
@@ -235,6 +256,7 @@
 		9BB9AD391517605D003FC9F7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9BAA4C42160F8578009C98CF /* Directions */,
 				9B3F08451579526F00CAE78D /* Default */,
 				9B3F084A1579526F00CAE78D /* Icons */,
 				9B3F08511579526F00CAE78D /* Images */,
@@ -311,6 +333,7 @@
 				9B3F08661579526F00CAE78D /* pedestrian.png in Resources */,
 				9B3F08671579526F00CAE78D /* pedestrian@2x.png in Resources */,
 				9BAA4C3D160F8453009C98CF /* Default-568h@2x.png in Resources */,
+				9BAA4C44160F8578009C98CF /* sample.directions in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +353,8 @@
 				9B3F087A1579528000CAE78D /* HRColorUtil.m in Sources */,
 				9B3F08801579559700CAE78D /* MTDirectionsSampleViewController.m in Sources */,
 				9B3F0881157955BC00CAE78D /* AppDelegate.m in Sources */,
+				9BAA4C45160F8627009C98CF /* MTDSampleParser.m in Sources */,
+				9BAA4C46160F862A009C98CF /* MTDSampleRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
