@@ -30,6 +30,10 @@
 /** the address wrapped, may be nil */
 @property (nonatomic, retain) MTDAddress *address;
 
+/** has this waypoint a valid coordinate */
+@property (nonatomic, readonly) BOOL hasValidCoordinate;
+/** has this waypoint a valid address */
+@property (nonatomic, readonly) BOOL hasValidAddress;
 /** is this waypoint valid (valid coordinate or set address) */
 @property (nonatomic, readonly, getter = isValid) BOOL valid;
 
@@ -56,6 +60,13 @@
  @see initWithAddress:
  */
 + (MTDWaypoint *)waypointWithAddress:(MTDAddress *)address;
+
+/**
+ Creates and returns a singleton waypoint object representing the device’s current location.
+ 
+ @return An MTDWaypoint object representing the current location.
+ */
++ (MTDWaypoint *)waypointForCurrentLocation;
 
 /**
  The initializer used to create an instance of MTDWaypoint that wraps a given coordinate.

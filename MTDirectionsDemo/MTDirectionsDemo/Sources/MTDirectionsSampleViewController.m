@@ -51,7 +51,7 @@
         _intermediateGoals = [NSMutableArray array];
 
         MTDDirectionsSetLogLevel(MTDLogLevelVerbose);
-        MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+        // MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
     }
 
     return self;
