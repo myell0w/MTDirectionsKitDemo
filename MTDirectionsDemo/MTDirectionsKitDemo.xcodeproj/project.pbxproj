@@ -32,6 +32,7 @@
 		9B3F08801579559700CAE78D /* MTDirectionsSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B3F087F157952A400CAE78D /* MTDirectionsSampleViewController.m */; };
 		9B3F0881157955BC00CAE78D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B3F087D157952A400CAE78D /* AppDelegate.m */; };
 		9B76F423156F990A00B54B05 /* MTDirectionsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */; };
+		9BAA4C3D160F8453009C98CF /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BAA4C3C160F8453009C98CF /* Default-568h@2x.png */; };
 		9BB9AD191517602C003FC9F7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD181517602C003FC9F7 /* UIKit.framework */; };
 		9BB9AD1B1517602C003FC9F7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD1A1517602C003FC9F7 /* Foundation.framework */; };
 		9BB9AD1D1517602C003FC9F7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD1C1517602C003FC9F7 /* CoreGraphics.framework */; };
@@ -75,6 +76,7 @@
 		9B3F087E157952A400CAE78D /* MTDirectionsSampleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDirectionsSampleViewController.h; path = Sources/MTDirectionsSampleViewController.h; sourceTree = "<group>"; };
 		9B3F087F157952A400CAE78D /* MTDirectionsSampleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDirectionsSampleViewController.m; path = Sources/MTDirectionsSampleViewController.m; sourceTree = "<group>"; };
 		9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MTDirectionsKit.framework; path = ../MTDirectionsKit.framework; sourceTree = "<group>"; };
+		9BAA4C3C160F8453009C98CF /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		9BB9AD141517602C003FC9F7 /* MTDirections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTDirections.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BB9AD181517602C003FC9F7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9BB9AD1A1517602C003FC9F7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -108,6 +110,7 @@
 		9B3F08451579526F00CAE78D /* Default */ = {
 			isa = PBXGroup;
 			children = (
+				9BAA4C3C160F8453009C98CF /* Default-568h@2x.png */,
 				9B3F08461579526F00CAE78D /* Default-Portait.png */,
 				9B3F08471579526F00CAE78D /* Default-Portrait@2x.png */,
 				9B3F08481579526F00CAE78D /* Default.png */,
@@ -307,6 +310,7 @@
 				9B3F08651579526F00CAE78D /* car@2x.png in Resources */,
 				9B3F08661579526F00CAE78D /* pedestrian.png in Resources */,
 				9B3F08671579526F00CAE78D /* pedestrian@2x.png in Resources */,
+				9BAA4C3D160F8453009C98CF /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

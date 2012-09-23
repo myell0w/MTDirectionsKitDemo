@@ -51,7 +51,15 @@
         _intermediateGoals = [NSMutableArray array];
 
         MTDDirectionsSetLogLevel(MTDLogLevelVerbose);
-        // MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+
+        if (MTDDirectionsSupportsAppleMaps()) {
+            MTDDirectionsSetActiveAPI(MTDDirectionsAPIMapQuest);
+
+            // [MTDDirectionsRequestBing registerAPIKey:YOUR_API_KEY];
+            // MTDDirectionsSetActiveAPI(MTDDirectionsAPIBing);
+        } else {
+            MTDDirectionsSetActiveAPI(MTDDirectionsAPIGoogle);
+        }
     }
 
     return self;
