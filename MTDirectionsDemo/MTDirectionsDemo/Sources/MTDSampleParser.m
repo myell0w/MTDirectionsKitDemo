@@ -23,6 +23,7 @@
     }
 
     MTDRoute *route = [[MTDRoute alloc] initWithWaypoints:waypoints
+                                                maneuvers:nil
                                                  distance:[MTDDistance distanceWithMeters:150866.3]
                                             timeInSeconds:7915.
                                            additionalInfo:nil];
