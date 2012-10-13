@@ -7,10 +7,6 @@
 //
 
 
-#import <UIKit/UIKit.h>
-#import <MTDirectionsKit/MTDirectionsKit.h>
-
-
 @interface MTDirectionsSampleViewController : UIViewController <MTDDirectionsDelegate>
 
 + (id)viewController;

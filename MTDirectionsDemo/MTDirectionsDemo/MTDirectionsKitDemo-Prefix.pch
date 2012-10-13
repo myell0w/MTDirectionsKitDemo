@@ -13,4 +13,6 @@
     #import <Foundation/Foundation.h>
     #import <MapKit/MapKit.h>
     #import <CoreLocation/CoreLocation.h>
+    #import <QuartzCore/QuartzCore.h>
+    #import <MTDirectionsKit/MTDirectionsKit.h>
 #endif

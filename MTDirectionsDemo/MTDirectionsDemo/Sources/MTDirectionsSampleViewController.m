@@ -1,9 +1,8 @@
 #import "MTDirectionsSampleViewController.h"
-// Color Picker from https://github.com/hayashi311/Color-Picker-for-iOS
-#import "HRColorPickerViewController.h"
-#import <QuartzCore/QuartzCore.h>
-#import "MTDSampleParser.h"
+#import "HRColorPickerViewController.h" // Color Picker from https://github.com/hayashi311/Color-Picker-for-iOS
 #import "MTDSampleRequest.h"
+#import "MTDSampleParser.h"
+#import "MTDManeuverTableViewController.h"
 
 
 @interface MTDirectionsSampleViewController () <MKMapViewDelegate, UITextFieldDelegate, HRColorPickerViewControllerDelegate> {
@@ -69,7 +68,7 @@
         //MTDDirectionsAPIRegisterCustomParserClass([MTDSampleParser class]);
         //MTDDirectionsAPIRegisterCustomRequestClass([MTDSampleRequest class]);
     }
-
+    
     return self;
 }
 
@@ -86,30 +85,21 @@
     double delayInSeconds = 1.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-        // Enable one of them
-        // [self loadDirectionsWithIntermediateGoals];
-        [self loadAlternativeDirections];
+        if (MTDDirectionsGetActiveAPI() == MTDDirectionsAPICustom) {
+            CLLocationCoordinate2D from = CLLocationCoordinate2DMake(47.0616,16.3236);
+            CLLocationCoordinate2D to = CLLocationCoordinate2DMake(48.209,16.354);
+
+            [self.mapView loadDirectionsFrom:from
+                                          to:to
+                                   routeType:MTDDirectionsRouteTypeFastestDriving
+                        zoomToShowDirections:YES];
+        } else {
+            // Enable one of them
+            // [self loadDirectionsWithIntermediateGoals];
+            // [self loadLongDirections];
+            [self loadAlternativeDirections];
+        }
     });
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-
-    self.mapView.delegate = nil;
-    self.mapView = nil;
-    self.fromAnnotation = nil;
-    self.toAnnotation = nil;
-    self.searchItem = nil;
-    self.routeItem = nil;
-    self.cancelItem = nil;
-    self.navigationItem.leftBarButtonItem = nil;
-    self.segmentedControl = nil;
-    self.routeBackgroundView = nil;
-    self.fromControl = nil;
-    self.toControl = nil;
-    self.distanceControl = nil;
-    self.colorChooserControl = nil;
-    self.colorPopoverController = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -130,17 +120,14 @@
     NSLog(@"MapView %@ didFinishLoadingDirectionsOverlay: %@ (fromAddress:%@, toAddress:%@)",
           mapView, directionsOverlay, directionsOverlay.fromAddress, directionsOverlay.toAddress);
 
-    self.distanceControl.text = [NSString stringWithFormat:@"Distance: %@, Time: %@",
-                                 [directionsOverlay.distance description],
-                                 MTDGetFormattedTime(directionsOverlay.timeInSeconds)];
-
+    [self setDirectionsInfoFromRoute:directionsOverlay.activeRoute];
     [self.mapView removeAnnotations:self.mapView.annotations];
 
-    self.fromAnnotation = [[MKPointAnnotation alloc] init];
+    self.fromAnnotation = [MKPointAnnotation new];
     self.fromAnnotation.coordinate = directionsOverlay.fromCoordinate;
     self.fromAnnotation.title = [directionsOverlay.fromAddress descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
 
-    self.toAnnotation = [[MKPointAnnotation alloc] init];
+    self.toAnnotation = [MKPointAnnotation new];
     self.toAnnotation.coordinate = directionsOverlay.toCoordinate;
     self.toAnnotation.title = [directionsOverlay.toAddress descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
 
@@ -148,15 +135,17 @@
     [self.mapView addAnnotation:self.toAnnotation];
 
     for (MTDWaypoint *intermediateGoal in directionsOverlay.intermediateGoals) {
-        MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+        if (intermediateGoal.hasValidCoordinate) {
+            MKPointAnnotation *annotation = [MKPointAnnotation new];
 
-        annotation.coordinate = intermediateGoal.coordinate;
+            annotation.coordinate = intermediateGoal.coordinate;
 
-        if (intermediateGoal.address != nil) {
-            annotation.title = [intermediateGoal.address descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
+            if (intermediateGoal.hasValidAddress) {
+                annotation.title = [intermediateGoal.address descriptionWithAddressFields:MTDAddressFieldCity | MTDAddressFieldStreet | MTDAddressFieldCountry];
+            }
+
+            [self.mapView addAnnotation:annotation];
         }
-
-        [self.mapView addAnnotation:annotation];
     }
 
     [self hideLoadingIndicator];
@@ -167,12 +156,16 @@
 - (void)mapView:(MTDMapView *)mapView didFailLoadingDirectionsOverlayWithError:(NSError *)error {
     NSLog(@"MapView %@ didFailLoadingDirectionsOverlayWithError: %@", mapView, error);
 
-    self.distanceControl.text = [error.userInfo objectForKey:MTDDirectionsKitErrorMessageKey];
+    [self setDirectionsInfoText:[error.userInfo objectForKey:MTDDirectionsKitErrorMessageKey]];
     [self.mapView removeAnnotations:self.mapView.annotations];
     self.fromAnnotation = nil;
     self.toAnnotation = nil;
 
     [self hideLoadingIndicator];
+}
+
+- (void)mapView:(MTDMapView *)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+    [self setDirectionsInfoFromRoute:route];
 }
 
 - (UIColor *)mapView:(MTDMapView *)mapView colorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
@@ -339,7 +332,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 
         [self.intermediateGoals addObject:[MTDWaypoint waypointWithCoordinate:coordinate]];
 
-        MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+        MKPointAnnotation *annotation = [MKPointAnnotation new];
 
         annotation.coordinate = coordinate;
         [self.mapView addAnnotation:annotation];
@@ -351,6 +344,23 @@ didChangeDragState:(MKAnnotationViewDragState)newState
                                routeType:self.routeType
                     zoomToShowDirections:NO];
     }
+}
+
+- (void)handleShowManeuverPress:(UITapGestureRecognizer *)tap {
+    if ((tap.state & UIGestureRecognizerStateRecognized) == UIGestureRecognizerStateRecognized) {
+        if (self.mapView.directionsOverlay.activeRoute != nil) {
+            MTDManeuverTableViewController *viewController = [[MTDManeuverTableViewController alloc] initWithRoute:self.mapView.directionsOverlay.activeRoute];
+            UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+
+            viewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(handleManeuverDonePress:)];
+
+            [self presentViewController:navigationController animated:YES completion:nil];
+        }
+    }
+}
+
+- (void)handleManeuverDonePress:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)hideRouteView {
@@ -453,12 +463,16 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     self.distanceControl.textAlignment = UITextAlignmentCenter;
     self.distanceControl.shadowColor = [UIColor blackColor];
     self.distanceControl.shadowOffset = CGSizeMake(0.f, 1.f);
+    self.distanceControl.userInteractionEnabled = YES;
     self.distanceControl.text = @"Try MTDirectionsKit, it's great!";
     [self.view addSubview:self.distanceControl];
 
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleShowManeuverPress:)];
+    [self.distanceControl addGestureRecognizer:tapGesture];
+
     self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[[UIImage imageNamed:@"pedestrian"],
-                                                                        [UIImage imageNamed:@"bicycle"],
-                                                                        [UIImage imageNamed:@"car"]]];
+                             [UIImage imageNamed:@"bicycle"],
+                             [UIImage imageNamed:@"car"]]];
     self.segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
     self.segmentedControl.selectedSegmentIndex = 2;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
@@ -540,8 +554,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 - (void)loadDirectionsWithIntermediateGoals {
     CLLocationCoordinate2D from = CLLocationCoordinate2DMake(51.4554, -0.9742);              // Reading
     CLLocationCoordinate2D to = CLLocationCoordinate2DMake(51.38713, -1.0316);               // NSConference
-    CLLocationCoordinate2D intermediateGoal1 = CLLocationCoordinate2DMake(51.3765, -1.003);  // Beech Hill
-    CLLocationCoordinate2D intermediateGoal2 = CLLocationCoordinate2DMake(51.4388, -0.9409); // University
+    CLLocationCoordinate2D intermediateGoal1 = CLLocationCoordinate2DMake(51.4388, -0.9409); // University
+    CLLocationCoordinate2D intermediateGoal2 = CLLocationCoordinate2DMake(51.3765, -1.003);  // Beech Hill
 
     [self.mapView loadDirectionsFrom:[MTDWaypoint waypointWithCoordinate:from]
                                   to:[MTDWaypoint waypointWithCoordinate:to]
@@ -553,13 +567,32 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 }
 
 - (void)loadAlternativeDirections {
-    CLLocationCoordinate2D from = CLLocationCoordinate2DMake(40.339885, -75.926577);         // Reading USA
-    CLLocationCoordinate2D to = CLLocationCoordinate2DMake(38.895114, -77.036369);           // Washington D.C.
+     CLLocationCoordinate2D from = CLLocationCoordinate2DMake(40.339885, -75.926577);         // Reading USA
+     CLLocationCoordinate2D to = CLLocationCoordinate2DMake(38.895114, -77.036369);           // Washington D.C.
 
-    [self.mapView loadAlternativeDirectionsFrom:[MTDWaypoint waypointWithCoordinate:from]
-                                             to:[MTDWaypoint waypointWithCoordinate:to]
-                                      routeType:MTDDirectionsRouteTypeFastestDriving
-                           zoomToShowDirections:YES];
+     [self.mapView loadAlternativeDirectionsFrom:[MTDWaypoint waypointWithCoordinate:from]
+     to:[MTDWaypoint waypointWithCoordinate:to]
+     routeType:MTDDirectionsRouteTypeFastestDriving
+     zoomToShowDirections:YES];
+}
+
+- (void)loadLongDirections {
+    [self.mapView loadDirectionsFrom:[MTDWaypoint waypointWithAddress:[MTDAddress addressWithAddressString:@"Portland Oregon"]]
+                                  to:[MTDWaypoint waypointWithAddress:[MTDAddress addressWithAddressString:@"San Diego"]]
+                   intermediateGoals:@[[MTDWaypoint waypointWithAddress:[MTDAddress addressWithAddressString:@"New York"]]]
+                       optimizeRoute:YES
+                           routeType:MTDDirectionsRouteTypeFastestDriving
+                zoomToShowDirections:YES];
+}
+
+- (void)setDirectionsInfoText:(NSString *)text {
+    self.distanceControl.text = text;
+}
+
+- (void)setDirectionsInfoFromRoute:(MTDRoute *)route {
+    self.distanceControl.text = [NSString stringWithFormat:@"Distance: %@, Time: %@",
+                                 [route.distance description],
+                                 MTDGetFormattedTime(route.timeInSeconds)];
 }
 
 @end
