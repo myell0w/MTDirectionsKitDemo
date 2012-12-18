@@ -26,6 +26,8 @@
                                                 maneuvers:nil
                                                  distance:[MTDDistance distanceWithMeters:150866.3]
                                             timeInSeconds:7915.
+                                                     name:@"Route"
+                                                routeType:self.routeType
                                            additionalInfo:nil];
     
     MTDDirectionsOverlay *overlay = [[MTDDirectionsOverlay alloc] initWithRoutes:@[route]

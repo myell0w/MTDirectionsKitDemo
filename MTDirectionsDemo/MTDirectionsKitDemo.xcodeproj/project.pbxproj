@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9B2A5A991629825200CE4709 /* MTDManeuverTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2A5A95162981A500CE4709 /* MTDManeuverTableViewCell.m */; };
-		9B2A5A9A1629825500CE4709 /* MTDManeuverTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2A5A97162981A500CE4709 /* MTDManeuverTableViewController.m */; };
 		9B3F08581579526F00CAE78D /* Default-Portait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B3F08461579526F00CAE78D /* Default-Portait.png */; };
 		9B3F08591579526F00CAE78D /* Default-Portrait@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B3F08471579526F00CAE78D /* Default-Portrait@2x.png */; };
 		9B3F085A1579526F00CAE78D /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B3F08481579526F00CAE78D /* Default.png */; };
@@ -48,11 +46,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9B2A5A94162981A500CE4709 /* MTDManeuverTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDManeuverTableViewCell.h; path = Sources/MTDManeuverTableViewCell.h; sourceTree = "<group>"; };
-		9B2A5A95162981A500CE4709 /* MTDManeuverTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDManeuverTableViewCell.m; path = Sources/MTDManeuverTableViewCell.m; sourceTree = "<group>"; };
-		9B2A5A96162981A500CE4709 /* MTDManeuverTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDManeuverTableViewController.h; path = Sources/MTDManeuverTableViewController.h; sourceTree = "<group>"; };
-		9B2A5A97162981A500CE4709 /* MTDManeuverTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MTDManeuverTableViewController.m; path = Sources/MTDManeuverTableViewController.m; sourceTree = "<group>"; };
-		9B2A5A98162981A500CE4709 /* MTDManeuverTableViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTDManeuverTableViewControllerDelegate.h; path = Sources/MTDManeuverTableViewControllerDelegate.h; sourceTree = "<group>"; };
 		9B3F08461579526F00CAE78D /* Default-Portait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portait.png"; sourceTree = "<group>"; };
 		9B3F08471579526F00CAE78D /* Default-Portrait@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x.png"; sourceTree = "<group>"; };
 		9B3F08481579526F00CAE78D /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -133,18 +126,6 @@
 			name = "Sample API";
 			sourceTree = "<group>";
 		};
-		9B2A5A931629819200CE4709 /* Maneuver */ = {
-			isa = PBXGroup;
-			children = (
-				9B2A5A94162981A500CE4709 /* MTDManeuverTableViewCell.h */,
-				9B2A5A95162981A500CE4709 /* MTDManeuverTableViewCell.m */,
-				9B2A5A96162981A500CE4709 /* MTDManeuverTableViewController.h */,
-				9B2A5A97162981A500CE4709 /* MTDManeuverTableViewController.m */,
-				9B2A5A98162981A500CE4709 /* MTDManeuverTableViewControllerDelegate.h */,
-			);
-			name = Maneuver;
-			sourceTree = "<group>";
-		};
 		9B3F08451579526F00CAE78D /* Default */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,7 +194,6 @@
 				9B3F087D157952A400CAE78D /* AppDelegate.m */,
 				9B3F087E157952A400CAE78D /* MTDirectionsSampleViewController.h */,
 				9B3F087F157952A400CAE78D /* MTDirectionsSampleViewController.m */,
-				9B2A5A931629819200CE4709 /* Maneuver */,
 				9B2A5A911629818500CE4709 /* Sample API */,
 			);
 			name = Sources;
@@ -383,8 +363,6 @@
 				9B3F0881157955BC00CAE78D /* AppDelegate.m in Sources */,
 				9BAA4C45160F8627009C98CF /* MTDSampleParser.m in Sources */,
 				9BAA4C46160F862A009C98CF /* MTDSampleRequest.m in Sources */,
-				9B2A5A991629825200CE4709 /* MTDManeuverTableViewCell.m in Sources */,
-				9B2A5A9A1629825500CE4709 /* MTDManeuverTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,7 +2,6 @@
 #import "HRColorPickerViewController.h" // Color Picker from https://github.com/hayashi311/Color-Picker-for-iOS
 #import "MTDSampleRequest.h"
 #import "MTDSampleParser.h"
-#import "MTDManeuverTableViewController.h"
 
 
 @interface MTDirectionsSampleViewController () <MKMapViewDelegate, UITextFieldDelegate, HRColorPickerViewControllerDelegate> {
