@@ -1,5 +1,5 @@
 //
-//  MTDSampleRequest.h
+//  MTDSampleOverlayView.h
 //  MTDirectionsKitDemo
 //
 //  Created by Matthias Tretter
@@ -8,6 +8,7 @@
 
 #import <MTDirectionsKit/MTDirectionsKit.h>
 
-@interface MTDSampleRequest : MTDDirectionsRequest
+
+@interface MTDSampleOverlayView : MTDDirectionsOverlayView
 
 @end

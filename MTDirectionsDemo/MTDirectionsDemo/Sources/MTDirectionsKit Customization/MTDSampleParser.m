@@ -26,7 +26,7 @@
                                                 maneuvers:nil
                                                  distance:[MTDDistance distanceWithMeters:150866.3]
                                             timeInSeconds:7915.
-                                                     name:@"Route"
+                                                     name:nil
                                                 routeType:self.routeType
                                            additionalInfo:nil];
     
