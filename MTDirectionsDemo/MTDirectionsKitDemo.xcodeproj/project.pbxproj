@@ -46,6 +46,7 @@
 		9B7639B1168BBA44007C0C81 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B7639AD168BBA44007C0C81 /* Default-Landscape.png */; };
 		9B7639B2168BBA44007C0C81 /* Default-Landscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B7639AE168BBA44007C0C81 /* Default-Landscape@2x.png */; };
 		9B7639B3168BBA44007C0C81 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B7639AF168BBA44007C0C81 /* Default-Portrait.png */; };
+		9B7639B8168BBE0D007C0C81 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9B7639B7168BBE0D007C0C81 /* README.md */; };
 		9B76F423156F990A00B54B05 /* MTDirectionsKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */; };
 		9BAA4C44160F8578009C98CF /* sample.directions in Resources */ = {isa = PBXBuildFile; fileRef = 9BAA4C43160F8578009C98CF /* sample.directions */; };
 		9BB9AD191517602C003FC9F7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB9AD181517602C003FC9F7 /* UIKit.framework */; };
@@ -109,6 +110,7 @@
 		9B7639AD168BBA44007C0C81 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		9B7639AE168BBA44007C0C81 /* Default-Landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x.png"; sourceTree = "<group>"; };
 		9B7639AF168BBA44007C0C81 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait.png"; sourceTree = "<group>"; };
+		9B7639B7168BBE0D007C0C81 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		9B76F422156F990A00B54B05 /* MTDirectionsKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MTDirectionsKit.framework; path = ../MTDirectionsKit.framework; sourceTree = "<group>"; };
 		9BAA4C43160F8578009C98CF /* sample.directions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.directions; sourceTree = "<group>"; };
 		9BB9AD141517602C003FC9F7 /* MTDirections.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTDirections.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -328,6 +330,7 @@
 		9BB9AD1F1517602C003FC9F7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9B7639B7168BBE0D007C0C81 /* README.md */,
 				9BB9AD201517602C003FC9F7 /* MTDirectionsKitDemo-Info.plist */,
 				9BB9AD241517602C003FC9F7 /* main.m */,
 				9BB9AD261517602C003FC9F7 /* MTDirectionsKitDemo-Prefix.pch */,
@@ -426,6 +429,7 @@
 				9B7639B1168BBA44007C0C81 /* Default-Landscape.png in Resources */,
 				9B7639B2168BBA44007C0C81 /* Default-Landscape@2x.png in Resources */,
 				9B7639B3168BBA44007C0C81 /* Default-Portrait.png in Resources */,
+				9B7639B8168BBE0D007C0C81 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
