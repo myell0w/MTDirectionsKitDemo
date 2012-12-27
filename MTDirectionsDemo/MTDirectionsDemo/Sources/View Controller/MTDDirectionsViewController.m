@@ -412,12 +412,12 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 
     if (self.showsAnnotations) {
         self.fromAnnotation = [MKPointAnnotation new];
-        self.fromAnnotation.coordinate = directionsOverlay.fromCoordinate;
-        self.fromAnnotation.title = [directionsOverlay.fromAddress description];
+        self.fromAnnotation.coordinate = directionsOverlay.from.coordinate;
+        self.fromAnnotation.title = [directionsOverlay.from.address description];
 
         self.toAnnotation = [MKPointAnnotation new];
-        self.toAnnotation.coordinate = directionsOverlay.toCoordinate;
-        self.toAnnotation.title = [directionsOverlay.toAddress description];
+        self.toAnnotation.coordinate = directionsOverlay.to.coordinate;
+        self.toAnnotation.title = [directionsOverlay.to.address description];
 
         [self.mapView addAnnotation:self.fromAnnotation];
         [self.mapView addAnnotation:self.toAnnotation];

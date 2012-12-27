@@ -76,7 +76,7 @@ typedef NS_ENUM(NSUInteger, MTDMenuItem) {
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     switch (section) {
         case MTDMenuSectionApple:
-            return @"Samples demonstrating MTDirectionsKit used on Apple's MapKit. Running on iOS 6 this means Apple Maps are used, on previous iOS versions Google Maps.\n\n To test Bing Routes insert our API Key in AppDelegate.m, Line 23.";
+            return @"Samples demonstrating MTDirectionsKit used on Apple's MapKit. Running on iOS 6 this means Apple Maps are used, on previous iOS versions Google Maps.\n\n To test Bing Routes insert your API Key in AppDelegate.m, Line 23.";
 
         case MTDMenuSectionGoogle:
             return @"Samples demonstrating MTDirectionsKit on Google's Maps SDK.";

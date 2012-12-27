@@ -18,6 +18,7 @@
 		9B3F08601579526F00CAE78D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B3F084F1579526F00CAE78D /* Icon.png */; };
 		9B3F08611579526F00CAE78D /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B3F08501579526F00CAE78D /* Icon@2x.png */; };
 		9B3F0881157955BC00CAE78D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B3F087D157952A400CAE78D /* AppDelegate.m */; };
+		9B4649CB168CFA8300B0549D /* MTDirectionsKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9B4649CA168CFA8300B0549D /* MTDirectionsKit.bundle */; };
 		9B76397A168BB839007C0C81 /* car.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B76396E168BB839007C0C81 /* car.png */; };
 		9B76397B168BB839007C0C81 /* car@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B76396F168BB839007C0C81 /* car@2x.png */; };
 		9B76397C168BB839007C0C81 /* locate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B763970168BB839007C0C81 /* locate.png */; };
@@ -71,6 +72,7 @@
 		9B3F08501579526F00CAE78D /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		9B3F087C157952A400CAE78D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Sources/AppDelegate.h; sourceTree = "<group>"; };
 		9B3F087D157952A400CAE78D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Sources/AppDelegate.m; sourceTree = "<group>"; };
+		9B4649CA168CFA8300B0549D /* MTDirectionsKit.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MTDirectionsKit.bundle; sourceTree = "<group>"; };
 		9B76396E168BB839007C0C81 /* car.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = car.png; sourceTree = "<group>"; };
 		9B76396F168BB839007C0C81 /* car@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "car@2x.png"; sourceTree = "<group>"; };
 		9B763970168BB839007C0C81 /* locate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = locate.png; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 		9BAA4C42160F8578009C98CF /* Directions */ = {
 			isa = PBXGroup;
 			children = (
+				9B4649CA168CFA8300B0549D /* MTDirectionsKit.bundle */,
 				9BAA4C43160F8578009C98CF /* sample.directions */,
 			);
 			name = Directions;
@@ -430,6 +433,7 @@
 				9B7639B2168BBA44007C0C81 /* Default-Landscape@2x.png in Resources */,
 				9B7639B3168BBA44007C0C81 /* Default-Portrait.png in Resources */,
 				9B7639B8168BBE0D007C0C81 /* README.md in Resources */,
+				9B4649CB168CFA8300B0549D /* MTDirectionsKit.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
