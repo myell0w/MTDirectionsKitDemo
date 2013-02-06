@@ -28,6 +28,7 @@
                                             timeInSeconds:7915.
                                                      name:nil
                                                 routeType:self.routeType
+                                         containsTollRoad:YES
                                            additionalInfo:nil];
     
     MTDDirectionsOverlay *overlay = [[MTDDirectionsOverlay alloc] initWithRoutes:@[route]

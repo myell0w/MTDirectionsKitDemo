@@ -251,7 +251,6 @@
 				9B763993168BB84C007C0C81 /* MTDDirectionsMapBoxViewController.m */,
 				9B763992168BB84C007C0C81 /* MTDDirectionsMapBoxViewController.h */,
 				9B763994168BB84C007C0C81 /* MTDDirectionsViewController.h */,
-				9B763995168BB84C007C0C81 /* MTDDirectionsViewController.m */,
 			);
 			name = Directions;
 			sourceTree = "<group>";
@@ -261,6 +260,7 @@
 			children = (
 				9B763996168BB84C007C0C81 /* MTDMenuTableViewController.h */,
 				9B763997168BB84C007C0C81 /* MTDMenuTableViewController.m */,
+				9B763995168BB84C007C0C81 /* MTDDirectionsViewController.m */,
 			);
 			name = Menu;
 			sourceTree = "<group>";
@@ -379,7 +379,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = MTD;
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Matthias Tretter (@myell0w)";
 			};
 			buildConfigurationList = 9BB9AD0E1517602C003FC9F7 /* Build configuration list for PBXProject "MTDirectionsKitDemo" */;
@@ -469,6 +469,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -496,6 +500,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

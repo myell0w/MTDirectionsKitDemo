@@ -27,5 +27,6 @@
 
 - (void)optionsViewController:(MTDOptionsViewController *)optionsViewController didActivateAPI:(MTDDirectionsAPI)API;
 - (void)optionsViewController:(MTDOptionsViewController *)optionsViewController didChangeOverlayType:(BOOL)useCustomOverlay;
+- (void)optionsViewController:(MTDOptionsViewController *)optionsViewController didChangeAvoidanceOfTollRoads:(BOOL)avoidTollRoads;
 
 @end

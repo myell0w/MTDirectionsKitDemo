@@ -5,6 +5,7 @@
 
 @property (nonatomic, strong) IBOutlet UISegmentedControl *APIControl;
 @property (nonatomic, strong) IBOutlet UISwitch *customOverlayControl;
+@property (nonatomic, strong) IBOutlet UISwitch *avoidTollRoadsControl;
 
 @end
 
@@ -27,6 +28,7 @@
 
     self.APIControl.selectedSegmentIndex = (NSUInteger)MTDDirectionsGetActiveAPI();
     self.customOverlayControl.on = MTDOverriddenClass([MTDDirectionsOverlayView class]) != [MTDDirectionsOverlayView class];
+    // TODO: persist state of avoid switch
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -44,6 +46,12 @@
     BOOL useCustomizedOverlay = [sender isOn];
 
     [self.delegate optionsViewController:self didChangeOverlayType:useCustomizedOverlay];
+}
+
+- (IBAction)handleAvoidTollRoadsChange:(id)sender {
+    BOOL avoidTollRoads = [sender isOn];
+
+    [self.delegate optionsViewController:self didChangeAvoidanceOfTollRoads:avoidTollRoads];
 }
 
 @end

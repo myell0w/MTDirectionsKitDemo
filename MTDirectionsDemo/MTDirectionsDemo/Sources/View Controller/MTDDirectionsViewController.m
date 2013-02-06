@@ -12,6 +12,7 @@
 @interface MTDDirectionsViewController () <MTDOptionsViewControllerDelegate> {
     NSMutableArray *_intermediateGoals;
     BOOL _loadAlternatives;
+    NSUInteger _requestOptions;
 }
 
 @property (nonatomic, assign) MTDDirectionsAPI API;
@@ -54,6 +55,7 @@
         _overlayLineWidthFactor = 1.8f;
 
         _showsAnnotations = YES;
+        _requestOptions = MTDDirectionsRequestOptionNone;
         _intermediateGoals = [NSMutableArray array];
     }
 
@@ -164,6 +166,13 @@
     [self loadDirectionsAndZoom:YES];
 }
 
+- (void)optionsViewController:(MTDOptionsViewController *)optionsViewController didChangeAvoidanceOfTollRoads:(BOOL)avoidTollRoads {
+    _requestOptions = avoidTollRoads ? MTDDirectionsRequestOptionAvoidTollRoads : MTDDirectionsRequestOptionNone;
+
+    [self dismissModalViewControllerAnimated:YES];
+    [self loadDirectionsAndZoom:YES];
+}
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - MKMapViewDelegate
 ////////////////////////////////////////////////////////////////////////
@@ -233,9 +242,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 }
 
 - (MTDDirectionsOverlay *)mapView:(MTDMapView *)mapView didFinishLoadingDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
-    if (directionsOverlay.waypoints.count > 0) {
-        NSLog(@"Did finish loading directions from '%@' to '%@'", directionsOverlay.waypoints[0], [directionsOverlay.waypoints lastObject]);
-    }
+    NSLog(@"Did finish loading directions from '%@' to '%@'", directionsOverlay.from, directionsOverlay.to);
 
     self.directionsControl.hidden = NO;
     [self hideLoadingIndicator];
@@ -254,11 +261,15 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     [self.titleView setTitle:@"Error" detailText:[error.userInfo objectForKey:MTDDirectionsKitErrorMessageKey]];
 }
 
+//- (BOOL)mapView:(MTDMapView *)mapView shouldActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+//    return YES;
+//}
+
 - (void)mapView:(MTDMapView *)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     [self updateDirectionsInfoFromRoute:route];
 }
 
-- (UIColor *)mapView:(MTDMapView *)mapView colorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (UIColor *)mapView:(MTDMapView *)mapView colorForRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     return self.overlayColor;
 }
 
@@ -266,7 +277,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     return self.overlayLineWidthFactor;
 }
 
-- (void)mapView:(MTDMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation distanceToActiveRoute:(CGFloat)distanceToActiveRoute {
+- (void)mapView:(MTDMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation distanceToActiveRoute:(CGFloat)distanceToActiveRoute ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     if (self.reloadIfUserLocationDeviatesFromRoute && distanceToActiveRoute > 20.f) {
         [self loadDirectionsAndZoom:NO];
     }
@@ -482,8 +493,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
         [self.mapView loadDirectionsFrom:self.from
                                       to:self.to
                        intermediateGoals:self.intermediateGoals
-                           optimizeRoute:YES
                                routeType:self.routeType
+                                 options:MTDDirectionsRequestOptionOptimizeRoute | _requestOptions
                     zoomToShowDirections:zoomToShowDirections];
     } else {
         [self.mapView loadAlternativeDirectionsFrom:self.from
@@ -523,8 +534,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
         [self.mapView loadDirectionsFrom:from
                                       to:to
                        intermediateGoals:self.intermediateGoals
-                           optimizeRoute:YES
                                routeType:self.routeType
+                                 options:MTDDirectionsRequestOptionOptimizeRoute
                     zoomToShowDirections:YES];
     }
 }
@@ -572,7 +583,9 @@ didChangeDragState:(MKAnnotationViewDragState)newState
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
 
             viewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(handleManeuverDonePress:)];
+            navigationController.navigationBar.tintColor = self.navigationController.navigationBar.tintColor;
             navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+
             [self presentModalViewController:navigationController animated:YES];
         }
     }
@@ -606,6 +619,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
         self.routeType = MTDDirectionsRouteTypeFastestDriving;
     }
 
+    [self.view endEditing:YES];
     [self performSearchWithFromDescription:self.searchView.fromDescription toDescription:self.searchView.toDescription];
 }
 
