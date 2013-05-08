@@ -25,7 +25,7 @@
 #define MTDDirectionsNotificationKeyDistanceToActiveRoute           @"MTDDirectionsNotificationKeyDistanceToActiveRoute"
 
 
-@class MTDMapView;
+@protocol MTDMapView;
 @class MTDDirectionsOverlay;
 @class MTDRoute;
 
@@ -46,7 +46,7 @@
  @param to the end waypoint of the directions
  @param routeType the type of the route requested, e.g. pedestrian, cycling, fastest driving
  */
-- (void)mapView:(MTDMapView *)mapView willStartLoadingDirectionsFrom:(MTDWaypoint *)from to:(MTDWaypoint *)to routeType:(MTDDirectionsRouteType)routeType;
+- (void)mapView:(id<MTDMapView>)mapView willStartLoadingDirectionsFrom:(MTDWaypoint *)from to:(MTDWaypoint *)to routeType:(MTDDirectionsRouteType)routeType;
 
 /**
  Tells the delegate that the specified directionsOverlay was loaded on the specified mapView.
@@ -57,7 +57,7 @@
  @param directionsOverlay the overlay that was loaded
  @return the directionsOverlay that gets displayed on the mapView
  */
-- (MTDDirectionsOverlay *)mapView:(MTDMapView *)mapView didFinishLoadingDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
+- (MTDDirectionsOverlay *)mapView:(id<MTDMapView>)mapView didFinishLoadingDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 /**
  Tells the delegate that the mapView specified wasn't able to load the directions requested
@@ -65,7 +65,7 @@
  @param mapView the mapView that began loading the directions
  @param error the error that occured
  */
-- (void)mapView:(MTDMapView *)mapView didFailLoadingDirectionsOverlayWithError:(NSError *)error;
+- (void)mapView:(id<MTDMapView>)mapView didFailLoadingDirectionsOverlayWithError:(NSError *)error;
 
 /**
  Asks the delegate whether the specified route should be activated by tapping on it. 
@@ -75,7 +75,7 @@
  @param route the new active route
  @param directionsOverlay the directions overlay containing several routes
  */
-- (BOOL)mapView:(MTDMapView *)mapView shouldActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
+- (BOOL)mapView:(id<MTDMapView>)mapView shouldActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 /**
  Tells the delegate that the user activated the specified route by tapping on it
@@ -84,7 +84,7 @@
  @param route the new active route
  @param directionsOverlay the directions overlay containing several routes
  */
-- (void)mapView:(MTDMapView *)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
+- (void)mapView:(id<MTDMapView>)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 /**
  Asks the delegate for the color for the corresponding route of the specified directionsOverlay.
@@ -93,7 +93,7 @@
  @param route the route we want the color of
  @param directionsOverlay the overlay that contains the route
  */
-- (UIColor *)mapView:(MTDMapView *)mapView colorForRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
+- (UIColor *)mapView:(id<MTDMapView>)mapView colorForRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 /**
  Asks the delegate for the factor to multiply MKRoadWidthAtZoomScale with to compute the total overlay line width for the specified directionsOverlay.
@@ -102,7 +102,7 @@
  @param mapView the mapView that began loading the directions
  @param directionsOverlay the overlay we want the line width factor of
  */
-- (CGFloat)mapView:(MTDMapView *)mapView lineWidthFactorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
+- (CGFloat)mapView:(id<MTDMapView>)mapView lineWidthFactorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 /**
  This method is an extended version of - [MKMapViewDelegate mapView:didUpdateUserLocation] and is called at exactly the same times.
@@ -116,9 +116,10 @@
  updates while running in the background, you must use the Core Location framework.
 
  @param mapView the map view that is tracking the user’s location
- @param userLocation the location object representing the user’s latest location 
+ @param location the location object representing the user’s latest location 
  @param distanceToActiveRoute the distance in points between the userLocation and the active route on the mapView
+ @param directionsOverlay the overlay that contains the active route
  */
-- (void)mapView:(MTDMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation distanceToActiveRoute:(CGFloat)distanceToActiveRoute;
+- (void)mapView:(id<MTDMapView>)mapView didUpdateUserLocation:(CLLocation *)location distanceToActiveRoute:(CGFloat)distanceToActiveRoute ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay;
 
 @end
