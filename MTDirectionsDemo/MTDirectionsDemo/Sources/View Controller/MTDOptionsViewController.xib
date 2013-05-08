@@ -4723,25 +4723,6 @@ AAgAAAAIAAIACAACAAAAAgAAAAEAAQABAAE</bytes>
 				<object class="IBPartialClassDescription">
 					<string key="className">MTDOptionsViewController</string>
 					<string key="superclassName">UIViewController</string>
-					<dictionary class="NSMutableDictionary" key="actions">
-						<string key="handleAPIChange:">id</string>
-						<string key="handleAvoidTollRoadsChange:">id</string>
-						<string key="handleCustomizedOverlayChange:">id</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="actionInfosByName">
-						<object class="IBActionInfo" key="handleAPIChange:">
-							<string key="name">handleAPIChange:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="handleAvoidTollRoadsChange:">
-							<string key="name">handleAvoidTollRoadsChange:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="handleCustomizedOverlayChange:">
-							<string key="name">handleCustomizedOverlayChange:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="APIControl">UISegmentedControl</string>
 						<string key="avoidTollRoadsControl">UISwitch</string>

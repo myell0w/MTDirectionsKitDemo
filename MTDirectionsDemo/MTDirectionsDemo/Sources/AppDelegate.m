@@ -19,10 +19,29 @@
     self.window.backgroundColor = [UIColor blackColor];
     [self.window makeKeyAndVisible];
 
-    // T
-    // [MTDDirectionsRequestBing registerAPIKey:@"YOUR_BING_API_KEY"];
+    // TODO: Add your Bing API Key here
+    _bingAPIKey = @"";
+
+    // TODO: Add your Gooogle Maps SDK API Key here
+    _googleAPIKey = @"";
+
+    [self registerAPIKeys];
 
     return YES;
+}
+
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Private
+////////////////////////////////////////////////////////////////////////
+
+- (void)registerAPIKeys {
+    if (_bingAPIKey.length > 0) {
+        [MTDDirectionsRequestBing registerAPIKey:_bingAPIKey];
+    }
+
+    if (_googleAPIKey.length > 0) {
+        [GMSServices provideAPIKey:_googleAPIKey];
+    }
 }
 
 @end

@@ -8,13 +8,18 @@
 
 
 #import <MTDirectionsKit/MTDirectionsKit.h>
+#import "MTDSearchView.h"
 
 
-@interface MTDDirectionsViewController : UIViewController <MTDDirectionsDelegate, MKMapViewDelegate>
+@interface MTDDirectionsViewController : UIViewController <MTDDirectionsDelegate> {
+    BOOL _loadAlternatives;
+    NSMutableArray *_intermediateGoals;
+}
 
-@property (nonatomic, strong) id mapView;
+@property (nonatomic, strong) UIView<MTDMapView> *mapView;
 
 // Use these to customize
+@property (nonatomic, readonly) MTDDirectionsAPI API;
 @property (nonatomic, copy) NSArray *intermediateGoals;
 @property (nonatomic, assign) MTDDirectionsRouteType routeType;
 @property (nonatomic, assign) MTDMeasurementSystem measurementSystem;
@@ -29,8 +34,16 @@
 @property (nonatomic, assign) BOOL reloadIfUserLocationDeviatesFromRoute;
 
 
+@property (nonatomic, strong) MTDWaypoint *from;
+@property (nonatomic, strong) MTDWaypoint *to;
+@property (nonatomic, strong) MKPointAnnotation *fromAnnotation;
+@property (nonatomic, strong) MKPointAnnotation *toAnnotation;
+@property (nonatomic, strong) MTDSearchView *searchView;
+
+
 - (id)initWithAPI:(MTDDirectionsAPI)API from:(MTDWaypoint *)from to:(MTDWaypoint *)to loadAlternatives:(BOOL)loadAlternatives;
 
 - (void)registerCustomRequestClass:(Class)requestClass parserClass:(Class)parserClass;
+- (void)loadDirectionsAndZoom:(BOOL)zoomToShowDirections;
 
 @end

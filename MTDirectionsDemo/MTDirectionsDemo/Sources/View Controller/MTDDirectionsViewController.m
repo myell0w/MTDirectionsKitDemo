@@ -1,7 +1,6 @@
 #import "MTDDirectionsViewController.h"
 #import "MTDOptionsViewController.h"
 #import "MTDTitleView.h"
-#import "MTDSearchView.h"
 #import "MTDSampleOverlayView.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -10,23 +9,13 @@
 
 
 @interface MTDDirectionsViewController () <MTDOptionsViewControllerDelegate> {
-    NSMutableArray *_intermediateGoals;
-    BOOL _loadAlternatives;
     NSUInteger _requestOptions;
 }
 
-@property (nonatomic, assign) MTDDirectionsAPI API;
 @property (nonatomic, strong) Class requestClass;
 @property (nonatomic, strong) Class parserClass;
 
-@property (nonatomic, strong) MTDWaypoint *from;
-@property (nonatomic, strong) MTDWaypoint *to;
-
-@property (nonatomic, strong) MKPointAnnotation *fromAnnotation;
-@property (nonatomic, strong) MKPointAnnotation *toAnnotation;
-
 @property (nonatomic, strong) MTDTitleView *titleView;
-@property (nonatomic, strong) MTDSearchView *searchView;
 @property (nonatomic, strong) UISegmentedControl *directionsControl;
 @property (nonatomic, strong) UIButton *optionsControl;
 
@@ -86,11 +75,6 @@
     [super viewDidLoad];
 
     [self setupUI];
-
-    if (!_loadAlternatives && self.API != MTDDirectionsAPICustom) {
-        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapLongPress:)];
-        [self.mapView addGestureRecognizer:longPress];
-    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -109,6 +93,12 @@
     if ([self.mapView directionsOverlay] == nil) {
         [self loadDirectionsAndZoom:YES];
     }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+
+    [self hideLoadingIndicator];
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -144,6 +134,32 @@
     }
 }
 
+- (NSArray *)annotations {
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
+- (void)addAnnotation:(id<MKAnnotation>)annotation {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (void)removeAnnotations:(NSArray *)annotations {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (CLLocationCoordinate2D)coordinateForPoint:(CGPoint)point {
+    [self doesNotRecognizeSelector:_cmd];
+    return kCLLocationCoordinate2DInvalid;
+}
+
+- (void)zoomToMyLocation {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (void)setRegionFromWaypoints:(NSArray *)waypoints animated:(BOOL)animated {
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 ////////////////////////////////////////////////////////////////////////
 #pragma mark - MTDOptionsViewControllerDelegate
 ////////////////////////////////////////////////////////////////////////
@@ -174,65 +190,10 @@
 }
 
 ////////////////////////////////////////////////////////////////////////
-#pragma mark - MKMapViewDelegate
-////////////////////////////////////////////////////////////////////////
-
-- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
-    if ([annotation isKindOfClass:[MKUserLocation class]]) {
-        return nil;
-    }
-
-    MKPinAnnotationView *pin = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"MTDirectionsKitAnnotation"];
-
-    if (pin == nil) {
-        pin = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"MTDirectionsKitAnnotation"];
-    } else {
-        pin.annotation = annotation;
-    }
-
-    pin.draggable = YES;
-    pin.animatesDrop = YES;
-    pin.canShowCallout = YES;
-
-    if (annotation == self.fromAnnotation) {
-        pin.pinColor = MKPinAnnotationColorRed;
-    } else if (annotation == self.toAnnotation) {
-        pin.pinColor = MKPinAnnotationColorGreen;
-    } else {
-        pin.pinColor = MKPinAnnotationColorPurple;
-    }
-
-    return pin;
-}
-
-- (void)mapView:(MKMapView *)mapView
- annotationView:(MKAnnotationView *)annotationView
-didChangeDragState:(MKAnnotationViewDragState)newState
-   fromOldState:(MKAnnotationViewDragState)oldState {
-
-    if(newState == MKAnnotationViewDragStateEnding) {
-        if (annotationView.annotation == self.fromAnnotation) {
-            self.from = [MTDWaypoint waypointWithCoordinate:annotationView.annotation.coordinate];
-        } else if (annotationView.annotation == self.toAnnotation) {
-            self.to = [MTDWaypoint waypointWithCoordinate:annotationView.annotation.coordinate];
-        }
-
-        self.searchView.fromDescription = [NSString stringWithFormat:@"%f/%f",
-                                           self.fromAnnotation.coordinate.latitude,
-                                           self.fromAnnotation.coordinate.longitude];
-        self.searchView.toDescription = [NSString stringWithFormat:@"%f/%f",
-                                         self.toAnnotation.coordinate.latitude,
-                                         self.toAnnotation.coordinate.longitude];
-
-        [self loadDirectionsAndZoom:NO];
-    }
-}
-
-////////////////////////////////////////////////////////////////////////
 #pragma mark - MTDirectionsDelegate
 ////////////////////////////////////////////////////////////////////////
 
-- (void)mapView:(MTDMapView *)mapView willStartLoadingDirectionsFrom:(MTDWaypoint *)from to:(MTDWaypoint *)to routeType:(MTDDirectionsRouteType)routeType {
+- (void)mapView:(id<MTDMapView>)mapView willStartLoadingDirectionsFrom:(MTDWaypoint *)from to:(MTDWaypoint *)to routeType:(MTDDirectionsRouteType)routeType {
     NSLog(@"Will start loading directions from '%@' to '%@'", from, to);
 
     [self showLoadingIndicator];
@@ -241,7 +202,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     self.directionsControl.hidden = YES;
 }
 
-- (MTDDirectionsOverlay *)mapView:(MTDMapView *)mapView didFinishLoadingDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (MTDDirectionsOverlay *)mapView:(id<MTDMapView>)mapView didFinishLoadingDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     NSLog(@"Did finish loading directions from '%@' to '%@'", directionsOverlay.from, directionsOverlay.to);
 
     self.directionsControl.hidden = NO;
@@ -252,32 +213,34 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     return directionsOverlay;
 }
 
-- (void)mapView:(MTDMapView *)mapView didFailLoadingDirectionsOverlayWithError:(NSError *)error {
+- (void)mapView:(id<MTDMapView>)mapView didFailLoadingDirectionsOverlayWithError:(NSError *)error {
     NSLog(@"Did fail loading directions with error: %@", error);
 
     [self hideLoadingIndicator];
-    [self removeAnnotations];
+    [self removeAllAnnotations];
 
     [self.titleView setTitle:@"Error" detailText:[error.userInfo objectForKey:MTDDirectionsKitErrorMessageKey]];
 }
 
-//- (BOOL)mapView:(MTDMapView *)mapView shouldActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
-//    return YES;
-//}
+- (BOOL)mapView:(id<MTDMapView>)mapView shouldActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+    return YES;
+}
 
-- (void)mapView:(MTDMapView *)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (void)mapView:(id<MTDMapView>)mapView didActivateRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     [self updateDirectionsInfoFromRoute:route];
 }
 
-- (UIColor *)mapView:(MTDMapView *)mapView colorForRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (UIColor *)mapView:(id<MTDMapView>)mapView colorForRoute:(MTDRoute *)route ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     return self.overlayColor;
 }
 
-- (CGFloat)mapView:(MTDMapView *)mapView lineWidthFactorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (CGFloat)mapView:(id<MTDMapView>)mapView lineWidthFactorForDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
     return self.overlayLineWidthFactor;
 }
 
-- (void)mapView:(MTDMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation distanceToActiveRoute:(CGFloat)distanceToActiveRoute ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+- (void)mapView:(id<MTDMapView>)mapView didUpdateUserLocation:(MKUserLocation *)userLocation distanceToActiveRoute:(CGFloat)distanceToActiveRoute ofDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
+    NSLog(@"Did update user location, distance to active route: %f", distanceToActiveRoute);
+    
     if (self.reloadIfUserLocationDeviatesFromRoute && distanceToActiveRoute > 20.f) {
         [self loadDirectionsAndZoom:NO];
     }
@@ -412,14 +375,14 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     // TODO: MTDOverrideClass
 }
 
-- (void)removeAnnotations {
-    [self.mapView removeAnnotations:[self.mapView annotations]];
+- (void)removeAllAnnotations {
+    [self removeAnnotations:[self annotations]];
     self.fromAnnotation = nil;
     self.toAnnotation = nil;
 }
 
 - (void)updateMapAnnotationsFromDirectionsOverlay:(MTDDirectionsOverlay *)directionsOverlay {
-    [self removeAnnotations];
+    [self removeAllAnnotations];
 
     if (self.showsAnnotations) {
         self.fromAnnotation = [MKPointAnnotation new];
@@ -430,8 +393,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
         self.toAnnotation.coordinate = directionsOverlay.to.coordinate;
         self.toAnnotation.title = [directionsOverlay.to.address description];
 
-        [self.mapView addAnnotation:self.fromAnnotation];
-        [self.mapView addAnnotation:self.toAnnotation];
+        [self addAnnotation:self.fromAnnotation];
+        [self addAnnotation:self.toAnnotation];
 
         for (MTDWaypoint *intermediateGoal in directionsOverlay.intermediateGoals) {
             if (intermediateGoal.hasValidCoordinate) {
@@ -443,43 +406,8 @@ didChangeDragState:(MKAnnotationViewDragState)newState
                     annotation.title = [intermediateGoal.address description];
                 }
 
-                [self.mapView addAnnotation:annotation];
+                [self addAnnotation:annotation];
             }
-        }
-    }
-}
-
-- (void)setRegionFromWaypoints:(NSArray *)waypoints animated:(BOOL)animated {
-    if (waypoints != nil) {
-        CLLocationDegrees maxX = -DBL_MAX;
-        CLLocationDegrees maxY = -DBL_MAX;
-        CLLocationDegrees minX = DBL_MAX;
-        CLLocationDegrees minY = DBL_MAX;
-
-        for (NSUInteger i=0; i<waypoints.count; i++) {
-            MTDWaypoint *currentLocation = [waypoints objectAtIndex:i];
-
-            if (currentLocation.hasValidCoordinate) {
-                MKMapPoint mapPoint = MKMapPointForCoordinate(currentLocation.coordinate);
-
-                if (mapPoint.x > maxX) {
-                    maxX = mapPoint.x;
-                }
-                if (mapPoint.x < minX) {
-                    minX = mapPoint.x;
-                }
-                if (mapPoint.y > maxY) {
-                    maxY = mapPoint.y;
-                }
-                if (mapPoint.y < minY) {
-                    minY = mapPoint.y;
-                }
-            }
-        }
-
-        if (maxX != -DBL_MAX && minX != DBL_MAX) {
-            MKMapRect mapRect = MKMapRectMake(minX,minY,maxX-minX,maxY-minY);
-            [self.mapView setVisibleMapRect:mapRect edgePadding:UIEdgeInsetsMake(50.f, 50.f, 50.f, 50.f) animated:animated];
         }
     }
 }
@@ -545,22 +473,6 @@ didChangeDragState:(MKAnnotationViewDragState)newState
 #pragma mark - Target/Action
 ////////////////////////////////////////////////////////////////////////
 
-- (void)handleMapLongPress:(UILongPressGestureRecognizer *)longPress {
-    if ((longPress.state & UIGestureRecognizerStateRecognized) == UIGestureRecognizerStateRecognized) {
-        CGPoint location = [longPress locationInView:self.mapView];
-        CLLocationCoordinate2D coordinate = [self.mapView convertPoint:location toCoordinateFromView:self.mapView];
-
-        [_intermediateGoals addObject:[MTDWaypoint waypointWithCoordinate:coordinate]];
-
-        MKPointAnnotation *annotation = [MKPointAnnotation new];
-
-        annotation.coordinate = coordinate;
-        [self.mapView addAnnotation:annotation];
-
-        [self loadDirectionsAndZoom:NO];
-    }
-}
-
 - (void)handleOptionsTap:(id)sender {
     MTDOptionsViewController *optionsViewController = [MTDOptionsViewController viewController];
 
@@ -574,7 +486,7 @@ didChangeDragState:(MKAnnotationViewDragState)newState
     NSInteger selectedIndex = [sender selectedSegmentIndex];
 
     if (selectedIndex == 0) {
-        [self.mapView setCenterCoordinate:[self.mapView userLocation].coordinate animated:YES];
+        [self zoomToMyLocation];
     } else {
         MTDRoute *route = [self.mapView directionsOverlay].activeRoute;
 

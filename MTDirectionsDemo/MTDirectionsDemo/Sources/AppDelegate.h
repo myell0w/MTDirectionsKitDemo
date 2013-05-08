@@ -15,4 +15,7 @@
 @property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) UIViewController *rootViewController;
 
+@property (nonatomic, readonly) NSString *bingAPIKey;
+@property (nonatomic, readonly) NSString *googleAPIKey;
+
 @end

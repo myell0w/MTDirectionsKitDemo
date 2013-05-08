@@ -1,14 +1,16 @@
 #import "MTDMenuTableViewController.h"
 #import "MTDDirectionsAppleMapsViewController.h"
+#import "MTDDirectionsGoogleMapsViewController.h"
 #import "MTDSampleParser.h"
 #import "MTDSampleRequest.h"
+#import "AppDelegate.h"
 
 
 typedef NS_ENUM(NSUInteger, MTDMenuSection) {
     MTDMenuSectionApple,
     MTDMenuSectionGoogle,
     MTDMenuSectionMapBox,
-    MTDMenuSectionCount = 1
+    MTDMenuSectionCount = 2
 };
 
 typedef NS_ENUM(NSUInteger, MTDMenuItem) {
@@ -20,10 +22,6 @@ typedef NS_ENUM(NSUInteger, MTDMenuItem) {
     MTDMenuItemCount
 };
 
-
-@interface MTDMenuTableViewController ()
-
-@end
 
 @implementation MTDMenuTableViewController
 
@@ -79,7 +77,7 @@ typedef NS_ENUM(NSUInteger, MTDMenuItem) {
             return @"Samples demonstrating MTDirectionsKit used on Apple's MapKit. Running on iOS 6 this means Apple Maps are used, on previous iOS versions Google Maps.\n\n To test Bing Routes insert your API Key in AppDelegate.m, Line 23.";
 
         case MTDMenuSectionGoogle:
-            return @"Samples demonstrating MTDirectionsKit on Google's Maps SDK.";
+            return @"Samples demonstrating MTDirectionsKit on Google's Maps SDK. You need to provide your Google Maps SDK Key in AppDelegate.m, Line 26.";
 
         case MTDMenuSectionMapBox:
             return @"Samples demonstrating MTDirectionsKit on MapBox.";
@@ -123,6 +121,18 @@ typedef NS_ENUM(NSUInteger, MTDMenuItem) {
         }
 
         case MTDMenuSectionGoogle: {
+            AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+
+            if (appDelegate.googleAPIKey.length > 0) {
+                viewControllerClass = [MTDDirectionsGoogleMapsViewController class];
+            } else {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"API Key required"
+                                                                    message:@"You need to provide your Google API Key in AppDelegate.m, Line 26 to test Google Maps SDK integration."
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"Rad"
+                                                          otherButtonTitles:nil];
+                [alertView show];
+            }
             break;
         }
 
